@@ -1,7 +1,10 @@
 import { ensureOrders, sql } from "@/lib/db";
 import { createSession } from "@/lib/payments";
 
+export const dynamic = "force-dynamic";
+
 const PRICE_PENCE = 2400;
+const MAX_QUANTITY = 9;
 const ID_ALPHABET = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
 function newOrderId(): string {
@@ -12,12 +15,22 @@ function newOrderId(): string {
   return `ord_${chars.join("")}`;
 }
 
+interface CheckoutBody {
+  sku?: unknown;
+  qty?: unknown;
+  card?: unknown;
+}
+
 export async function POST(request: Request) {
-  const { sku, qty, card } = (await request.json()) as {
-    sku: string;
-    qty: number;
-    card: string;
-  };
+  const body = (await request.json().catch(() => null)) as CheckoutBody | null;
+
+  const sku = typeof body?.sku === "string" ? body.sku.trim() : "";
+  const qty = Number(body?.qty);
+  const card = typeof body?.card === "string" ? body.card.trim() : "";
+
+  if (!sku || !card || !Number.isInteger(qty) || qty < 1 || qty > MAX_QUANTITY) {
+    return Response.json({ error: "sku, qty and card are required" }, { status: 400 });
+  }
 
   await ensureOrders();
   const session = await createSession(card);
@@ -31,5 +44,5 @@ export async function POST(request: Request) {
     values (${orderId}, ${sku}, ${qty}, ${customerId}, ${PRICE_PENCE * qty}, 'paid')
   `;
 
-  return Response.json({ orderId });
+  return Response.json({ orderId, amount: PRICE_PENCE * qty });
 }

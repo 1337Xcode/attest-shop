@@ -2,23 +2,30 @@
   "name": "attest-shop",
   "version": "1.0.0",
   "private": true,
-  "description": "The application Attest watches. Deliberately tiny so one repair fits inside a minute.",
+  "description": "The storefront Attest watches. One product, one checkout, one real order row.",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "lint": "tsc --noEmit"
   },
   "dependencies": {
     "next": "16.3.3",
     "postgres": "3.4.9",
     "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react-dom": "19.2.8",
+    "class-variance-authority": "0.7.1",
+    "clsx": "2.1.1",
+    "lucide-react": "1.37.0",
+    "tailwind-merge": "3.6.0"
   },
   "devDependencies": {
     "@types/node": "26.4.0",
     "@types/react": "19.2.18",
     "@types/react-dom": "19.2.5",
-    "typescript": "5.9.3"
+    "typescript": "5.9.3",
+    "@tailwindcss/postcss": "4.3.3",
+    "tailwindcss": "4.3.3"
   }
 }
