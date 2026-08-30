@@ -22,8 +22,7 @@ export async function POST(request: Request) {
   await ensureOrders();
   const session = await createSession(card);
 
-  // Guest checkout has no customer object, so this must tolerate null.
-  const customerId = session?.customer?.id ?? "guest";
+  const customerId = session.customer!.id;
 
   const orderId = newOrderId();
   await sql()`
